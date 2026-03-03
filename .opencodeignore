@@ -1,0 +1,74 @@
+# Dependency & Build
+node_modules/
+dist/
+build/
+out/
+.output/
+.next/
+.vercel/
+*.tsbuildinfo
+coverage/
+.nyc_output/
+.turbo/
+.nx/cache/
+.parcel-cache/
+.swc/
+.esbuild/
+target/
+*.class
+*.jar
+*.war
+*.ear
+.gradle/
+gradle/wrapper/gradle-wrapper.jar
+.m2/
+.spring-boot-devtools.properties
+hs_err_pid*.log
+replay_pid*.log
+.idea/
+*.iml
+
+# 환경변수 & 시크릿
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+*.pfx
+secrets/
+credentials/
+
+# 버전 관리
+.git/
+
+# 로그 & 임시
+*.log
+*.log.*
+logs/
+npm-debug.log*
+yarn-error.log*
+tmp/
+temp/
+
+# Mac 시스템
+.DS_Store
+._*
+.Spotlight-V100
+
+# 에디터
+.vscode/
+*.swp
+*~
+
+# 바이너리 & 미디어
+*.zip
+*.tar.gz
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.mp4
+*.pdf

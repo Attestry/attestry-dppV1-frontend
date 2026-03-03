@@ -1,0 +1,7 @@
+ã…n
+ lsof -i :5174
+  kill -9 <PID>
+  npm run dev
+
+
+
