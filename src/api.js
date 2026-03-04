@@ -1,8 +1,11 @@
 import axios from 'axios';
 import { extractPublicPassportCode } from './utils/qrPayload';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';
+const API_ORIGIN = API_BASE_URL.replace(/\/api\/v1\/?$/, '');
+
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1',
+    baseURL: API_BASE_URL,
     headers: {
         'Content-Type': 'application/json'
     }
@@ -83,7 +86,7 @@ export const mintApi = (data) => api.post('/brands/mint', data);
 export const releaseApi = (data) => api.post('/brands/release', data);
 
 // Public stats
-export const getTodayStatsApi = () => api.get('/api/stats/today');
+export const getTodayStatsApi = () => axios.get(`${API_ORIGIN}/api/stats/today`);
 
 // Admin User Management
 export const getPendingUsersApi = (page = 0, size = 20) =>
