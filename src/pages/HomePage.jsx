@@ -252,9 +252,9 @@ const HomePage = () => {
                     padding: '36px 0', borderTop: '1px solid rgba(0,0,0,0.05)', borderBottom: '1px solid rgba(0,0,0,0.05)'
                 }}>
                     {[
-                        { num: countAssets.toLocaleString(), label: '등록된 자산', color: '#1A4D3B' },
-                        { num: countTransfers.toLocaleString(), label: '양도 완료', color: '#6B4C9A' },
-                        { num: countLedger.toLocaleString(), label: '원장 기록', color: '#1A4D3B' }
+                        { num: countAssets.toLocaleString(), label: '등록된 자산', subLabel: 'TODAY (KST)', color: '#1A4D3B' },
+                        { num: countTransfers.toLocaleString(), label: '양도 완료', subLabel: 'TODAY (KST)', color: '#6B4C9A' },
+                        { num: countLedger.toLocaleString(), label: '원장 기록', subLabel: 'TODAY (KST)', color: '#1A4D3B' }
                     ].map((s, i) => (
                         <div key={i} style={{ textAlign: 'center' }}>
                             <div style={{
@@ -265,6 +265,9 @@ const HomePage = () => {
                             </div>
                             <div style={{ fontSize: '0.9rem', color: '#94A3B8', fontWeight: '500' }}>
                                 {s.label}
+                            </div>
+                            <div style={{ marginTop: '4px', fontSize: '0.72rem', color: '#94A3B8', fontWeight: '700', letterSpacing: '0.06em' }}>
+                                {s.subLabel}
                             </div>
                         </div>
                     ))}
