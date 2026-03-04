@@ -46,7 +46,7 @@ const Screen6TransferStart = () => {
             // Handle Spring Boot LocalDateTime serialization which occasionally comes as an array [y, M, d, h, m, s, ms]
             if (Array.isArray(transferInfo.expiresAt)) {
                 const [y, M, d, h, m, s] = transferInfo.expiresAt;
-                expiryTime = new Date(y, M - 1, d, h || 0, m || 0, s || 0).getTime();
+                expiryTime = Date.UTC(y, M - 1, d, h || 0, m || 0, s || 0);
             } else {
                 expiryTime = new Date(transferInfo.expiresAt).getTime();
             }
