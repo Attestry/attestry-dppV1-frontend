@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
 import { ShieldCheck, ScanLine, ArrowsExchange, TrendingUp } from '../components/Icons';
-import axios from 'axios';
+import { getTodayStatsApi } from '../api';
 import { useIsMobile } from '../hooks/useIsMobile';
 
 const useCountUp = (target, duration = 1200) => {
@@ -35,10 +35,16 @@ const HomePage = () => {
     const countLedger = useCountUp(stats.ledger);
 
     useEffect(() => {
-        axios.get('/api/stats/today').then(res => {
-            const data = res.data?.data ?? res.data;
-            if (data && typeof data.assets === 'number') setStats(data);
-        }).catch(() => { });
+        getTodayStatsApi()
+            .then(res => {
+                const data = res.data;
+                if (data && typeof data.assets === 'number') {
+                    setStats(data);
+                }
+            })
+            .catch((error) => {
+                console.error('Failed to fetch today stats:', error);
+            });
     }, []);
 
     return (

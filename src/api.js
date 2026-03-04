@@ -82,6 +82,9 @@ export const approveServiceApi = (caseId) => api.post(`/services/${caseId}/appro
 export const mintApi = (data) => api.post('/brands/mint', data);
 export const releaseApi = (data) => api.post('/brands/release', data);
 
+// Public stats
+export const getTodayStatsApi = () => api.get('/api/stats/today');
+
 // Admin User Management
 export const getPendingUsersApi = (page = 0, size = 20) =>
     api.get('/admin/users/pending', { params: { page, size } });
