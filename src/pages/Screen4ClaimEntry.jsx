@@ -167,26 +167,28 @@ const Screen4ClaimEntry = () => {
                         <button
                             onClick={() => setTradeType('DIRECT')}
                             style={{
-                                flex: 1, padding: '14px', fontSize: '0.95rem', fontWeight: '700', borderRadius: '12px',
+                                flex: 1, padding: '12px 6px', fontSize: '0.88rem', fontWeight: '700', borderRadius: '12px',
                                 background: tradeType === 'DIRECT' ? '#FFFFFF' : 'transparent',
                                 color: tradeType === 'DIRECT' ? '#1A4D3B' : '#A0AEC0', border: 'none',
                                 boxShadow: tradeType === 'DIRECT' ? '0 4px 12px rgba(0,0,0,0.05)' : 'none',
-                                cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+                                cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center',
+                                justifyContent: 'center', gap: '4px', whiteSpace: 'nowrap'
                             }}
                         >
-                            <span>📷</span> 매장 스캔 등록
+                            <span>📷</span> QR 스캔
                         </button>
                         <button
                             onClick={() => setTradeType('ONLINE')}
                             style={{
-                                flex: 1, padding: '14px', fontSize: '0.95rem', fontWeight: '700', borderRadius: '12px',
+                                flex: 1, padding: '12px 6px', fontSize: '0.88rem', fontWeight: '700', borderRadius: '12px',
                                 background: tradeType === 'ONLINE' ? '#FFFFFF' : 'transparent',
                                 color: tradeType === 'ONLINE' ? '#1A4D3B' : '#A0AEC0', border: 'none',
                                 boxShadow: tradeType === 'ONLINE' ? '0 4px 12px rgba(0,0,0,0.05)' : 'none',
-                                cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+                                cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center',
+                                justifyContent: 'center', gap: '4px', whiteSpace: 'nowrap'
                             }}
                         >
-                            <span>✍️</span> 시크릿 코드 등록
+                            <span>✍️</span> 코드 입력
                         </button>
                     </div>
                 </div>

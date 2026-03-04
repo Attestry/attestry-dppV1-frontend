@@ -62,13 +62,9 @@ const Screen2Login = () => {
                     </p>
                 </div>
 
-                {errorMsg ? (
+                {errorMsg && (
                     <div style={{ padding: '16px', background: '#FFF5F5', color: '#C53030', borderRadius: '12px', marginBottom: '24px', fontSize: '0.9rem', fontWeight: '600', border: '1px solid #FEB2B2', display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <span>⚠️</span> {errorMsg}
-                    </div>
-                ) : (
-                    <div style={{ padding: '16px', background: '#F0F9F4', color: '#2A7258', borderRadius: '12px', marginBottom: '24px', fontSize: '0.9rem', fontWeight: '600', border: '1px solid #C6F6D5', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span>ℹ</span> 테스트를 위해 하단의 프리셋 계정을 이용해 보세요.
                     </div>
                 )}
 

@@ -165,14 +165,16 @@ const Screen5MyPassports = () => {
                                     return (
                                         <div key={req.requestId} style={{
                                             background: '#FAFCFB', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '16px 20px',
-                                            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                                            display: 'flex', flexDirection: isMobile ? 'column' : 'row',
+                                            justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center',
+                                            gap: isMobile ? '12px' : '0',
                                             animation: 'fadeInUp 0.3s ease-out', position: 'relative'
                                         }}>
-                                            <div style={{ flex: 1 }}>
-                                                <div style={{ fontSize: '1.05rem', fontWeight: '700', color: '#102A20', marginBottom: '4px' }}>{req.modelName}</div>
+                                            <div style={{ flex: 1, minWidth: 0 }}>
+                                                <div style={{ fontSize: '1.05rem', fontWeight: '700', color: '#102A20', marginBottom: '4px', wordBreak: 'break-word' }}>{req.modelName}</div>
                                                 <div style={{ fontSize: '0.85rem', color: '#718096' }}>S/N: {req.serialNumber} | 신청일: {req.createdAt?.split('T')[0]}</div>
                                             </div>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
                                                 <div style={{
                                                     background: statusColor, color: textColor, padding: '8px 12px', borderRadius: '8px',
                                                     fontSize: '0.85rem', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '6px'

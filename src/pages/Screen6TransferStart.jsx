@@ -17,6 +17,7 @@ const Screen6TransferStart = () => {
     const [loading, setLoading] = useState(false);
     const [authError, setAuthError] = useState(null);
     const [timeLeft, setTimeLeft] = useState(0);
+    const [transferCompleted, setTransferCompleted] = useState(false);
 
     // Fetch active transfer on mount
     useEffect(() => {
@@ -70,12 +71,62 @@ const Screen6TransferStart = () => {
         return () => clearInterval(interval);
     }, [transferInfo, navigate]);
 
+    // Poll for transfer completion (receiver accepted)
+    useEffect(() => {
+        if (!transferInfo) return;
+
+        const poll = setInterval(async () => {
+            try {
+                const active = await getActiveTransfer(passportId);
+                if (!active || !active.transferToken) {
+                    setTransferCompleted(true);
+                    clearInterval(poll);
+                }
+            } catch {
+                setTransferCompleted(true);
+                clearInterval(poll);
+            }
+        }, 3000);
+
+        return () => clearInterval(poll);
+    }, [transferInfo, passportId, getActiveTransfer]);
+
     useEffect(() => {
         if (!currentUser) {
             setAuthError("안전한 양도를 위해 라운지 로그인이 필요합니다.");
             setTimeout(() => navigate('/login?return=/me/passports'), 3000);
         }
     }, [currentUser, navigate]);
+
+    if (transferCompleted) {
+        return (
+            <div style={{ minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
+                <div style={{
+                    background: '#FFFFFF', borderRadius: '32px', padding: '60px 40px',
+                    boxShadow: '0 20px 50px rgba(56, 161, 105, 0.1)', border: '1px solid rgba(56, 161, 105, 0.2)',
+                    textAlign: 'center', maxWidth: '420px', width: '100%',
+                    animation: 'scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                }}>
+                    <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🎉</div>
+                    <h2 style={{ fontSize: '1.6rem', fontWeight: '800', color: '#1A4D3B', marginBottom: '16px' }}>소유권 이전 완료</h2>
+                    <p style={{ fontSize: '1rem', color: '#4A5568', lineHeight: '1.6', marginBottom: '30px' }}>
+                        상대방이 소유권을 성공적으로 인수했습니다.<br />이전 기록이 원장에 영구 등재되었습니다.
+                    </p>
+                    <button
+                        onClick={() => navigate('/me/passports')}
+                        style={{
+                            width: '100%', padding: '16px', fontSize: '1rem', fontWeight: '700', borderRadius: '14px',
+                            background: 'linear-gradient(135deg, #1A4D3B 0%, #2A7258 100%)', color: 'white',
+                            border: 'none', cursor: 'pointer'
+                        }}
+                    >
+                        내 자산 지갑으로 이동
+                    </button>
+                </div>
+                <style>{`@keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }`}</style>
+            </div>
+        );
+    }
 
     if (authError) {
         return (
