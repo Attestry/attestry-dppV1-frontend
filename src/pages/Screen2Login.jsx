@@ -25,25 +25,15 @@ const Screen2Login = () => {
 
     if (currentUser) return null;
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+        if (e) e.preventDefault();
         setErrorMsg('');
-        if (!email.trim() || !password.trim()) {
-            setErrorMsg("이메일과 비밀번호를 정확히 입력해주세요.");
-            return;
-        }
-
         try {
-            const res = await login(email, password);
-            let target = returnUrl;
-            if (res && res.role === 'ADMIN') target = '/admin/approval';
-            else if (res && res.role === 'BRAND') target = '/brand/mint';
-            navigate(target);
-        } catch (e) {
-            setErrorMsg(e.message);
+            await login(email, password);
+        } catch (err) {
+            setErrorMsg(err.message);
         }
     };
-
-
 
     return (
         <div style={{ padding: isMobile ? '24px 12px' : '60px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
@@ -68,67 +58,63 @@ const Screen2Login = () => {
                     </div>
                 )}
 
-                <div style={{ marginBottom: '20px' }}>
-                    <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', color: '#4A5568', marginBottom: '10px' }}>
-                        이메일 (ID)
-                    </label>
-                    <input
-                        type="email"
-                        placeholder="이메일을 입력하세요"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        style={{
-                            width: '100%', padding: '18px', fontSize: '1.05rem', borderRadius: '12px', color: '#102A20',
-                            border: '1px solid #E2E8F0', outline: 'none', transition: 'border-color 0.2s', background: '#FAFCFB'
-                        }}
-                        onFocus={(e) => e.target.style.borderColor = '#1A4D3B'}
-                        onBlur={(e) => e.target.style.borderColor = '#E2E8F0'}
-                    />
-                </div>
-
-                <div style={{ marginBottom: '32px' }}>
-                    <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', color: '#4A5568', marginBottom: '10px' }}>
-                        최고 보안 비밀번호
-                    </label>
-                    <input
-                        type="password"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        style={{
-                            width: '100%', padding: '18px', fontSize: '1.05rem', borderRadius: '12px', color: '#102A20',
-                            border: '1px solid #E2E8F0', outline: 'none', transition: 'border-color 0.2s', background: '#FAFCFB', letterSpacing: '4px'
-                        }}
-                        onFocus={(e) => e.target.style.borderColor = '#1A4D3B'}
-                        onBlur={(e) => e.target.style.borderColor = '#E2E8F0'}
-                        onKeyDown={e => e.key === 'Enter' && handleLogin()}
-                    />
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
+                    <div>
+                        <input
+                            type="email"
+                            placeholder="이메일 주소"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                            required
+                            style={{
+                                width: '100%', padding: '16px', borderRadius: '12px', border: '1px solid #E2E8F0',
+                                fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box'
+                            }}
+                            onFocus={e => e.target.style.borderColor = '#1A4D3B'}
+                            onBlur={e => e.target.style.borderColor = '#E2E8F0'}
+                        />
+                    </div>
+                    <div>
+                        <input
+                            type="password"
+                            placeholder="비밀번호"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            required
+                            style={{
+                                width: '100%', padding: '16px', borderRadius: '12px', border: '1px solid #E2E8F0',
+                                fontSize: '1rem', outline: 'none', transition: 'border-color 0.2s', boxSizing: 'border-box'
+                            }}
+                            onFocus={e => e.target.style.borderColor = '#1A4D3B'}
+                            onBlur={e => e.target.style.borderColor = '#E2E8F0'}
+                        />
+                    </div>
                     <button
-                        onClick={handleLogin}
+                        type="submit"
                         style={{
-                            width: '100%', padding: '18px', fontSize: '1.1rem', fontWeight: '700', borderRadius: '14px',
-                            background: 'linear-gradient(135deg, #1A4D3B 0%, #2A7258 100%)', color: 'white',
-                            border: 'none', cursor: 'pointer', transition: 'box-shadow 0.2s', boxShadow: '0 8px 15px rgba(26, 77, 59, 0.2)'
+                            width: '100%', padding: '18px', borderRadius: '14px', border: 'none', marginTop: '8px',
+                            background: 'linear-gradient(135deg, #102A20 0%, #1A4D3B 100%)',
+                            color: 'white', fontSize: '1.1rem', fontWeight: '800', cursor: 'pointer',
+                            boxShadow: '0 10px 20px rgba(26, 77, 59, 0.25)', transition: 'transform 0.2s'
                         }}
-                        onMouseOver={(e) => e.currentTarget.style.boxShadow = '0 12px 20px rgba(26, 77, 59, 0.3)'}
-                        onMouseOut={(e) => e.currentTarget.style.boxShadow = '0 8px 15px rgba(26, 77, 59, 0.2)'}
+                        onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                        onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
                     >
                         로그인
                     </button>
+                </form>
 
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <button
                         onClick={() => navigate(`/signup?return=${encodeURIComponent(returnUrl)}`)}
                         style={{
                             width: '100%', padding: '18px', fontSize: '1rem', fontWeight: '700', borderRadius: '14px',
                             background: '#FFFFFF', color: '#4A5568', border: '1px solid #E2E8F0', cursor: 'pointer', transition: 'background 0.2s'
                         }}
-                        onMouseOver={(e) => e.currentTarget.style.background = '#F7FAFC'}
-                        onMouseOut={(e) => e.currentTarget.style.background = '#FFFFFF'}
+                        onMouseOver={e => e.currentTarget.style.background = '#F7FAFC'}
+                        onMouseOut={e => e.currentTarget.style.background = '#FFFFFF'}
                     >
-                        새로운 계정 등록
+                        새로운 파트너 등록 (가입)
                     </button>
                 </div>
             </div>
