@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
 import { ShieldCheck, ScanLine, ArrowsExchange, TrendingUp } from '../components/Icons';
 import axios from 'axios';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const HomePage = () => {
     const navigate = useNavigate();
     const { currentUser } = useDPPStore();
+    const isMobile = useIsMobile();
     const [stats, setStats] = useState({ assets: 0, transfers: 0, ledger: 0 });
 
     useEffect(() => {
@@ -27,7 +29,8 @@ const HomePage = () => {
             display: 'flex', flexDirection: 'column', alignItems: 'center',
             position: 'relative'
         }}>
-            {/* Background blurs */}
+            {/* Background blurs — hidden on mobile for performance */}
+            {!isMobile && <>
             <div style={{
                 position: 'fixed', top: '-10%', right: '-5%', width: '40vw', height: '40vw',
                 background: 'radial-gradient(circle, rgba(162, 133, 222, 0.08) 0%, transparent 60%)',
@@ -38,6 +41,7 @@ const HomePage = () => {
                 background: 'radial-gradient(circle, rgba(20, 70, 50, 0.06) 0%, transparent 65%)',
                 filter: 'blur(70px)', zIndex: 0, pointerEvents: 'none'
             }} />
+            </>}
 
             <div style={{
                 position: 'relative', zIndex: 1, width: '100%', maxWidth: '1000px',
@@ -56,7 +60,7 @@ const HomePage = () => {
 
                 {/* Hero Copy */}
                 <h1 style={{
-                    fontSize: 'clamp(2.5rem, 5.5vw, 4.5rem)', fontWeight: '800',
+                    fontSize: 'clamp(1.8rem, 6vw, 4.5rem)', fontWeight: '800',
                     letterSpacing: '-0.04em', lineHeight: '1.15', textAlign: 'center',
                     margin: '0 0 20px 0', color: '#102A20'
                 }}>
@@ -82,7 +86,8 @@ const HomePage = () => {
                         src="/hero.png"
                         alt="Attestry DPP"
                         style={{
-                            width: '280px', height: '280px', objectFit: 'contain',
+                            width: 'clamp(160px, 50vw, 280px)', height: 'clamp(160px, 50vw, 280px)',
+                            objectFit: 'contain',
                             filter: 'drop-shadow(0 20px 40px rgba(26, 77, 59, 0.12))',
                             animation: 'floatHero 4s ease-in-out infinite'
                         }}
@@ -219,7 +224,7 @@ const HomePage = () => {
 
                 {/* ── Stats Counter Section ── */}
                 <div style={{
-                    display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px',
+                    display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: isMobile ? '12px' : '24px',
                     width: '100%', marginTop: '64px', marginBottom: '64px',
                     padding: '36px 0', borderTop: '1px solid rgba(0,0,0,0.05)', borderBottom: '1px solid rgba(0,0,0,0.05)'
                 }}>

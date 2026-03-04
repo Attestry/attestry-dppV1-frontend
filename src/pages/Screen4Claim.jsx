@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
 import { Lock, Package } from '../components/Icons';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const Screen4Claim = () => {
     const { token } = useParams();
     const navigate = useNavigate();
     const { currentUser, claimAsset, getTransferDetails } = useDPPStore();
+    const isMobile = useIsMobile();
     const [tokenData, setTokenData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [claiming, setClaiming] = useState(false);
@@ -77,9 +79,9 @@ const Screen4Claim = () => {
     );
 
     return (
-        <div style={{ padding: '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+        <div style={{ padding: isMobile ? '20px 12px' : '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
             <div style={{
-                background: '#FFFFFF', borderRadius: '24px', padding: '40px', width: '100%', maxWidth: '600px',
+                background: '#FFFFFF', borderRadius: '24px', padding: isMobile ? '28px 20px' : '40px', width: '100%', maxWidth: '600px',
                 boxShadow: '0 12px 30px rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.04)',
                 animation: 'fadeInUp 0.4s ease-out'
             }}>

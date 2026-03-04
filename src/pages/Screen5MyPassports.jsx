@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
 import Pagination from '../components/Pagination';
 import { Lock, FolderOpen, Clock, CheckCircle, XCircle, Package, Inbox } from '../components/Icons';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const Screen5MyPassports = () => {
     const navigate = useNavigate();
     const { currentUser, getMyPassports, getMyRegistrations } = useDPPStore();
+    const isMobile = useIsMobile();
 
     const [myPassports, setMyPassports] = useState([]);
     const [totalPassports, setTotalPassports] = useState(0);
@@ -105,7 +107,7 @@ const Screen5MyPassports = () => {
 
                 {/* Stats Bar */}
                 <div style={{
-                    display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '32px'
+                    display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '16px', marginBottom: '32px'
                 }}>
                     {[
                         { label: '보유 자산', value: totalPassports, color: '#1A4D3B', bg: '#F0F9F4' },
@@ -231,9 +233,10 @@ const Screen5MyPassports = () => {
                                     myPassports.map(p => (
                                         <div key={p.passportId} style={{
                                             background: '#FFFFFF', borderRadius: '20px', padding: '24px', display: 'flex',
-                                            justifyContent: 'space-between', alignItems: 'center', gap: '24px',
-                                            border: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 8px 20px rgba(0,0,0,0.02)', cursor: 'default', transition: 'transform 0.2s', flexWrap: 'wrap'
-                                        }} onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={(e) => e.currentTarget.style.transform = 'none'}>
+                                            flexDirection: isMobile ? 'column' : 'row',
+                                            justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', gap: '16px',
+                                            border: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 8px 20px rgba(0,0,0,0.02)', cursor: 'default', transition: 'transform 0.2s'
+                                        }} onMouseOver={(e) => !isMobile && (e.currentTarget.style.transform = 'translateY(-2px)')} onMouseOut={(e) => e.currentTarget.style.transform = 'none'}>
 
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                                                 <div style={{
@@ -254,7 +257,7 @@ const Screen5MyPassports = () => {
                                                 </div>
                                             </div>
 
-                                            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                                            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', width: isMobile ? '100%' : 'auto' }}>
                                                 <button
                                                     onClick={() => {
                                                         const rawCode = p.qrPublicCode || p.qRPublicCode || p.qrpublicCode || p.QR_PUBLIC_CODE;

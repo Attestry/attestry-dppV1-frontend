@@ -4,11 +4,13 @@ import { useDPPStore } from '../store/useDPPStore';
 import { ShieldCheck, ArrowsExchange, ScanLine, Send } from '../components/Icons';
 import { QRCodeSVG } from 'qrcode.react';
 import { buildTransferAcceptUrl } from '../utils/qrPayload';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const Screen6TransferStart = () => {
     const { passportId } = useParams();
     const navigate = useNavigate();
     const { currentUser, initiateTransfer, getMyPassports, getActiveTransfer } = useDPPStore();
+    const isMobile = useIsMobile();
 
     const [method, setMethod] = useState(null); // 'IN_PERSON_QR' or 'ONE_TIME_CODE'
     const [transferInfo, setTransferInfo] = useState(null);
@@ -139,9 +141,9 @@ const Screen6TransferStart = () => {
     };
 
     return (
-        <div style={{ padding: '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+        <div style={{ padding: isMobile ? '20px 12px' : '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
             <div style={{
-                background: '#FFFFFF', borderRadius: '24px', padding: '50px 40px', width: '100%', maxWidth: '600px',
+                background: '#FFFFFF', borderRadius: '24px', padding: isMobile ? '30px 20px' : '50px 40px', width: '100%', maxWidth: '600px',
                 boxShadow: '0 12px 30px rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.04)'
             }}>
                 <div style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -233,13 +235,13 @@ const Screen6TransferStart = () => {
                         {method === 'IN_PERSON_QR' ? (
                             <>
                                 <div style={{
-                                    width: '240px', height: '240px', margin: '0 auto 24px', background: '#FFF',
+                                    width: 'clamp(160px, 60vw, 240px)', height: 'clamp(160px, 60vw, 240px)', margin: '0 auto 24px', background: '#FFF',
                                     border: '1px solid #E2E8F0', borderRadius: '16px', padding: '10px',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 30px rgba(0,0,0,0.05)'
                                 }}>
                                     <QRCodeSVG
                                         value={transferAcceptUrl}
-                                        size={210}
+                                        size={isMobile ? Math.min(window.innerWidth * 0.5, 180) : 210}
                                         bgColor={"#ffffff"}
                                         fgColor={"#102A20"}
                                         level={"M"}

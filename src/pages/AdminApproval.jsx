@@ -3,9 +3,11 @@ import { useDPPStore } from '../store/useDPPStore';
 import { useNavigate } from 'react-router-dom';
 import Pagination from '../components/Pagination';
 import { ShieldCheck, Settings, Inbox, Clock } from '../components/Icons';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const AdminApproval = () => {
     const { listRegistrations, approveRegistration, rejectRegistration, currentUser } = useDPPStore();
+    const isMobile = useIsMobile();
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [authError, setAuthError] = useState(null);
@@ -103,7 +105,8 @@ const AdminApproval = () => {
             if (urls && urls.length > 0) {
                 return (
                     <div style={{
-                        width: '120px', height: '120px', borderRadius: '12px', overflow: 'hidden',
+                        width: 'clamp(80px, 20vw, 120px)', height: 'clamp(80px, 20vw, 120px)',
+                        borderRadius: '12px', overflow: 'hidden',
                         border: '2px solid #E2E8F0', boxShadow: '0 4px 10px rgba(0,0,0,0.05)', cursor: 'pointer'
                     }} onClick={() => window.open(urls[0], '_blank')}>
                         <img src={urls[0]} alt="Evidence" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -146,7 +149,7 @@ const AdminApproval = () => {
                 {/* Dashboard Stats */}
                 {!loading && (
                     <div style={{
-                        display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '32px'
+                        display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px', marginBottom: '32px'
                     }}>
                         <div style={{
                             background: '#FFFBEB', borderRadius: '16px', padding: '20px',
@@ -203,7 +206,7 @@ const AdminApproval = () => {
                                                     </div>
                                                 </div>
 
-                                                <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
+                                                <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '30px' }}>
                                                     <div style={{ flexShrink: 0 }}>
                                                         <div style={{ fontSize: '0.85rem', fontWeight: '700', color: '#718096', marginBottom: '8px' }}>제출된 증빙 데이터</div>
                                                         {renderEvidence(req.evidenceUrls)}
@@ -211,7 +214,7 @@ const AdminApproval = () => {
                                                     </div>
 
                                                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                                        <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '8px', fontSize: '0.95rem' }}>
+                                                        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '120px 1fr', gap: '8px', fontSize: '0.95rem' }}>
                                                             <div style={{ color: '#718096', fontWeight: '600' }}>고유 일련번호</div>
                                                             <div style={{ color: '#102A20', fontWeight: '700', fontFamily: 'monospace', fontSize: '1rem' }}>{req.serialNumber}</div>
 

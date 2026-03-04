@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5QrcodeScanner, Html5Qrcode } from 'html5-qrcode';
 import { extractTransferCredential } from '../utils/qrPayload';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const Screen7TransferAccept = () => {
     const { token } = useParams();
@@ -11,6 +12,7 @@ const Screen7TransferAccept = () => {
     const navigate = useNavigate();
     const { currentUser, acceptTransfer } = useDPPStore();
 
+    const isMobile = useIsMobile();
     const [codeInput, setCodeInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [scanMode, setScanMode] = useState(true);
@@ -66,7 +68,31 @@ const Screen7TransferAccept = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [searchParams, currentUser]);
 
+    const handleMobileFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (!currentUser) {
+            const returnPath = `/transfer/accept`;
+            navigate(`/login?return=${encodeURIComponent(returnPath)}`);
+            return;
+        }
+
+        setLoading(true);
+        const tempDivId = 'mobile-qr-temp-transfer';
+        try {
+            const html5QrCode = new Html5Qrcode(tempDivId);
+            const result = await html5QrCode.scanFile(file, true);
+            handleAcceptDirectly(result);
+        } catch (err) {
+            alert("QR 인식 실패: 더 선명한 사진을 찍거나 QR 코드 전체가 보이도록 찍어주세요.");
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
+        if (isMobile) return; // Mobile uses native camera input
+
         const isCameraSupported = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
         if (!isCameraSupported) {
             setCameraBlocked(true);
@@ -122,7 +148,7 @@ const Screen7TransferAccept = () => {
             }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [scanMode, loading, searchParams]);
+    }, [scanMode, loading, searchParams, isMobile]);
 
     const handleAccept = async () => {
         const manual = codeInput.trim();
@@ -138,9 +164,10 @@ const Screen7TransferAccept = () => {
     };
 
     return (
-        <div style={{ padding: '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+        <div id="mobile-qr-temp-transfer" style={{ display: 'none' }} />
+        <div style={{ padding: isMobile ? '20px 12px' : '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
             <div style={{
-                background: '#FFFFFF', borderRadius: '24px', padding: '50px 40px', width: '100%', maxWidth: '500px',
+                background: '#FFFFFF', borderRadius: '24px', padding: isMobile ? '30px 20px' : '50px 40px', width: '100%', maxWidth: '500px',
                 boxShadow: '0 12px 30px rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.04)', textAlign: 'center'
             }}>
                 <div style={{ fontSize: '3rem', marginBottom: '16px' }}>🔑</div>
@@ -157,20 +184,44 @@ const Screen7TransferAccept = () => {
                 )}
 
                 {scanMode && !loading && !searchParams.get('payload') && !searchParams.get('c') && (
-                    <div style={{ marginBottom: '30px', overflow: 'hidden', borderRadius: '16px', border: '2px solid #E2E8F0', padding: cameraBlocked ? '20px' : '0' }}>
-                        {cameraBlocked ? (
-                            <div style={{ textAlign: 'center', color: '#E53E3E', fontSize: '0.9rem', lineHeight: '1.5' }}>
-                                ⚠️ <b>카메라 권한 차단됨</b><br /><br />
-                                모바일/브라우저에서 카메라 권한을 허용하거나 HTTPS 환경에서 다시 시도해 주세요.
-                                <br /><br />
-                                <button onClick={() => setScanMode(false)} style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #E53E3E', background: '#FFF5F5', color: '#E53E3E', cursor: 'pointer', marginTop: '10px' }}>
-                                    수동으로 코드 입력하기
-                                </button>
-                            </div>
-                        ) : (
-                            <div id="qr-reader" style={{ width: '100%' }}></div>
-                        )}
-                    </div>
+                    isMobile ? (
+                        <div style={{ marginBottom: '30px' }}>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                capture="environment"
+                                id="mobile-camera-transfer"
+                                style={{ display: 'none' }}
+                                onChange={handleMobileFileChange}
+                            />
+                            <label
+                                htmlFor="mobile-camera-transfer"
+                                style={{
+                                    display: 'block', padding: '24px', background: '#F0F9F4', border: '2px dashed #2A7258',
+                                    borderRadius: '16px', cursor: 'pointer', textAlign: 'center'
+                                }}
+                            >
+                                <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>📷</div>
+                                <div style={{ fontSize: '1rem', fontWeight: '700', color: '#1A4D3B', marginBottom: '6px' }}>카메라로 QR 스캔</div>
+                                <div style={{ fontSize: '0.85rem', color: '#718096' }}>터치하여 카메라 앱으로 QR 코드를 촬영하세요</div>
+                            </label>
+                        </div>
+                    ) : (
+                        <div style={{ marginBottom: '30px', overflow: 'hidden', borderRadius: '16px', border: '2px solid #E2E8F0', padding: cameraBlocked ? '20px' : '0' }}>
+                            {cameraBlocked ? (
+                                <div style={{ textAlign: 'center', color: '#E53E3E', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                                    ⚠️ <b>카메라 권한 차단됨</b><br /><br />
+                                    모바일/브라우저에서 카메라 권한을 허용하거나 HTTPS 환경에서 다시 시도해 주세요.
+                                    <br /><br />
+                                    <button onClick={() => setScanMode(false)} style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid #E53E3E', background: '#FFF5F5', color: '#E53E3E', cursor: 'pointer', marginTop: '10px' }}>
+                                        수동으로 코드 입력하기
+                                    </button>
+                                </div>
+                            ) : (
+                                <div id="qr-reader" style={{ width: '100%' }}></div>
+                            )}
+                        </div>
+                    )
                 )}
 
                 {!scanMode && (

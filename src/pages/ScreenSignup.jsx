@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
 import { User } from '../components/Icons';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const ROLE_OPTIONS = [
     { value: 'OWNER', label: '일반 소비자', sub: 'Owner', icon: '👤', color: '#38A169' },
@@ -28,7 +29,7 @@ const RoleDropdown = ({ role, setRole }) => {
             <div
                 onClick={() => setOpen(!open)}
                 style={{
-                    width: '100%', padding: '16px', fontSize: '1.05rem', borderRadius: '12px', color: '#102A20',
+                    width: '100%', padding: '16px', fontSize: '1rem', borderRadius: '12px', color: '#102A20',
                     border: `1px solid ${open ? '#1A4D3B' : '#E2E8F0'}`, background: '#FAFCFB',
                     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                     transition: 'border-color 0.2s', boxSizing: 'border-box'
@@ -84,6 +85,7 @@ const ScreenSignup = () => {
     const navigate = useNavigate();
     const returnUrl = '/me/passports';
     const { signup } = useDPPStore();
+    const isMobile = useIsMobile();
 
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
@@ -164,7 +166,6 @@ const ScreenSignup = () => {
                     message: "환영합니다! 개인 금고 생성이 성공적으로 완료되었습니다."
                 });
             }
-            // Navigation handled by modal button
         } catch (e) {
             console.error("Signup error:", e);
             setErrorMsg(e.message);
@@ -173,16 +174,23 @@ const ScreenSignup = () => {
         }
     };
 
+    const inputStyle = {
+        width: '100%', padding: '16px', fontSize: '1rem', borderRadius: '12px', color: '#102A20',
+        border: '1px solid #E2E8F0', outline: 'none', transition: 'border-color 0.2s', background: '#FAFCFB'
+    };
+
     return (
-        <div style={{ padding: '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+        <div style={{ padding: isMobile ? '20px 12px' : '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
             <div style={{
-                background: '#FFFFFF', borderRadius: '32px', padding: '50px 40px', width: '100%', maxWidth: '500px',
+                background: '#FFFFFF', borderRadius: '32px',
+                padding: isMobile ? 'clamp(24px, 6vw, 32px) clamp(16px, 5vw, 24px)' : '50px 40px',
+                width: '100%', maxWidth: '500px',
                 boxShadow: '0 20px 50px rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.04)',
                 animation: 'fadeInUp 0.5s ease-out'
             }}>
                 <div style={{ textAlign: 'center', marginBottom: '30px' }}>
                     <div style={{ marginBottom: '16px' }}><User width={36} height={36} stroke="#6B4C9A" /></div>
-                    <h2 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#102A20', margin: '0 0 12px 0' }}>새로운 계정 등록</h2>
+                    <h2 style={{ fontSize: isMobile ? '1.5rem' : '1.8rem', fontWeight: '800', color: '#102A20', margin: '0 0 12px 0' }}>새로운 계정 등록</h2>
                     <p style={{ fontSize: '0.95rem', color: '#718096', margin: 0, lineHeight: '1.5' }}>
                         디지털 자산을 안전하게 관리할 개인 금고를 개설합니다.
                     </p>
@@ -203,16 +211,14 @@ const ScreenSignup = () => {
                         placeholder="user@example.com"
                         value={email}
                         onChange={e => setEmail(e.target.value)}
-                        style={{
-                            width: '100%', padding: '16px', fontSize: '1.05rem', borderRadius: '12px', color: '#102A20',
-                            border: '1px solid #E2E8F0', outline: 'none', transition: 'border-color 0.2s', background: '#FAFCFB'
-                        }}
+                        style={inputStyle}
                         onFocus={(e) => e.target.style.borderColor = '#1A4D3B'}
                         onBlur={(e) => e.target.style.borderColor = '#E2E8F0'}
                     />
                 </div>
 
-                <div style={{ display: 'flex', gap: '16px', marginBottom: '20px' }}>
+                {/* Phone + Role: column on mobile, row on desktop */}
+                <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '16px', marginBottom: '20px' }}>
                     <div style={{ flex: 1 }}>
                         <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', color: '#4A5568', marginBottom: '10px' }}>
                             연락처
@@ -222,10 +228,7 @@ const ScreenSignup = () => {
                             placeholder="010-0000-0000"
                             value={phone}
                             onChange={e => setPhone(formatPhone(e.target.value))}
-                            style={{
-                                width: '100%', padding: '16px', fontSize: '1.05rem', borderRadius: '12px', color: '#102A20',
-                                border: '1px solid #E2E8F0', outline: 'none', transition: 'border-color 0.2s', background: '#FAFCFB'
-                            }}
+                            style={inputStyle}
                             onFocus={(e) => e.target.style.borderColor = '#1A4D3B'}
                             onBlur={(e) => e.target.style.borderColor = '#E2E8F0'}
                         />
@@ -254,10 +257,7 @@ const ScreenSignup = () => {
                             placeholder="000-00-00000"
                             value={businessNumber}
                             onChange={e => setBusinessNumber(e.target.value)}
-                            style={{
-                                width: '100%', padding: '16px', fontSize: '1.05rem', borderRadius: '12px', color: '#102A20',
-                                border: '1px solid #E2E8F0', outline: 'none', transition: 'border-color 0.2s', background: '#FAFCFB'
-                            }}
+                            style={inputStyle}
                             onFocus={(e) => e.target.style.borderColor = '#1A4D3B'}
                             onBlur={(e) => e.target.style.borderColor = '#E2E8F0'}
                         />
@@ -274,10 +274,7 @@ const ScreenSignup = () => {
                             placeholder="예: Gucci, Louis Vuitton"
                             value={brandName}
                             onChange={e => setBrandName(e.target.value)}
-                            style={{
-                                width: '100%', padding: '16px', fontSize: '1.05rem', borderRadius: '12px', color: '#102A20',
-                                border: '1px solid #E2E8F0', outline: 'none', transition: 'border-color 0.2s', background: '#FAFCFB'
-                            }}
+                            style={inputStyle}
                             onFocus={(e) => e.target.style.borderColor = '#1A4D3B'}
                             onBlur={(e) => e.target.style.borderColor = '#E2E8F0'}
                         />
@@ -292,10 +289,7 @@ const ScreenSignup = () => {
                         placeholder="8자 이상 + 대문자 1개 이상 필수"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
-                        style={{
-                            width: '100%', padding: '16px', fontSize: '1.05rem', borderRadius: '12px', color: '#102A20',
-                            border: '1px solid #E2E8F0', outline: 'none', transition: 'border-color 0.2s', background: '#FAFCFB', letterSpacing: '2px'
-                        }}
+                        style={{ ...inputStyle, letterSpacing: '2px' }}
                         onFocus={(e) => e.target.style.borderColor = '#1A4D3B'}
                         onBlur={(e) => e.target.style.borderColor = '#E2E8F0'}
                     />
@@ -310,10 +304,7 @@ const ScreenSignup = () => {
                         placeholder="동일한 비밀번호 재입력"
                         value={confirmPassword}
                         onChange={e => setConfirmPassword(e.target.value)}
-                        style={{
-                            width: '100%', padding: '16px', fontSize: '1.05rem', borderRadius: '12px', color: '#102A20',
-                            border: '1px solid #E2E8F0', outline: 'none', transition: 'border-color 0.2s', background: '#FAFCFB', letterSpacing: '2px'
-                        }}
+                        style={{ ...inputStyle, letterSpacing: '2px' }}
                         onFocus={(e) => e.target.style.borderColor = '#1A4D3B'}
                         onBlur={(e) => e.target.style.borderColor = '#E2E8F0'}
                     />
@@ -324,7 +315,7 @@ const ScreenSignup = () => {
                         onClick={handleSignup}
                         disabled={loading}
                         style={{
-                            width: '100%', padding: '18px', fontSize: '1.1rem', fontWeight: '700', borderRadius: '14px',
+                            width: '100%', padding: isMobile ? '16px' : '18px', fontSize: '1.1rem', fontWeight: '700', borderRadius: '14px',
                             background: loading ? '#A0AEC0' : 'linear-gradient(135deg, #1A4D3B 0%, #2A7258 100%)', color: 'white',
                             border: 'none', cursor: loading ? 'not-allowed' : 'pointer', transition: 'box-shadow 0.2s', boxShadow: loading ? 'none' : '0 8px 15px rgba(26, 77, 59, 0.2)'
                         }}
@@ -337,7 +328,7 @@ const ScreenSignup = () => {
                     <button
                         onClick={() => navigate(`/login?return=${encodeURIComponent(returnUrl)}`)}
                         style={{
-                            width: '100%', padding: '18px', fontSize: '1rem', fontWeight: '700', borderRadius: '14px',
+                            width: '100%', padding: isMobile ? '14px' : '18px', fontSize: '1rem', fontWeight: '700', borderRadius: '14px',
                             background: '#FFFFFF', color: '#4A5568', border: 'none', cursor: 'pointer', textDecoration: 'underline'
                         }}
                     >

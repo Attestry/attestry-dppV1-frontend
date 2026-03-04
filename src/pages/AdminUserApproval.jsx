@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
 import { getPendingUsersApi, approveUserApi, rejectUserApi } from '../api';
 import Pagination from '../components/Pagination';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const AdminUserApproval = () => {
     const navigate = useNavigate();
     const { currentUser } = useDPPStore();
+    const isMobile = useIsMobile();
     const [pendingUsers, setPendingUsers] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const [page, setPage] = useState(1);
@@ -128,7 +130,7 @@ const AdminUserApproval = () => {
                             </div>
 
                             <div style={{
-                                display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px',
+                                display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '12px',
                                 background: '#FAFCFB', borderRadius: '12px', padding: '16px', marginBottom: '20px'
                             }}>
                                 <div>

@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
 import { Lock, Package } from '../components/Icons';
 import { getPublicPassportApi } from '../api';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const Screen8ProviderSubmit = () => {
     const navigate = useNavigate();
     const { currentUser, submitService } = useDPPStore();
+    const isMobile = useIsMobile();
 
     const [qrInput, setQrInput] = useState('QR8F2K');
     const [kind, setKind] = useState('REPAIR');
@@ -69,9 +71,9 @@ const Screen8ProviderSubmit = () => {
     };
 
     return (
-        <div style={{ padding: '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+        <div style={{ padding: isMobile ? '20px 12px' : '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
             <div style={{
-                background: '#FFFFFF', borderRadius: '24px', padding: '40px', width: '100%', maxWidth: '600px',
+                background: '#FFFFFF', borderRadius: '24px', padding: isMobile ? '28px 20px' : '40px', width: '100%', maxWidth: '600px',
                 boxShadow: '0 12px 30px rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.04)'
             }}>
                 <div style={{ textAlign: 'center', marginBottom: '40px' }}>

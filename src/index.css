@@ -58,6 +58,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   font-feature-settings: 'kern' 1;
+  /* Prevent iOS tap highlight */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* iOS safe area support */
+@supports (padding: max(0px)) {
+  .safe-bottom {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
 }
 
 ::-webkit-scrollbar {

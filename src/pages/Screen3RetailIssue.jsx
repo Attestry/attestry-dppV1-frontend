@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
 import { ArrowsExchange, Package } from '../components/Icons';
 import { getPublicPassportApi } from '../api';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const Screen3RetailIssue = () => {
+    const isMobile = useIsMobile();
     const [qrCodeInput, setQrCodeInput] = useState('');
     const [tradeType, setTradeType] = useState('DIRECT'); // DIRECT or ONLINE
     const [generatedCode, setGeneratedCode] = useState(null); // OTC-XXXX format for CODE
@@ -76,9 +78,9 @@ const Screen3RetailIssue = () => {
     };
 
     return (
-        <div style={{ padding: '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+        <div style={{ padding: isMobile ? '20px 12px' : '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
             <div style={{
-                background: '#FFFFFF', borderRadius: '24px', padding: '40px', width: '100%', maxWidth: '600px',
+                background: '#FFFFFF', borderRadius: '24px', padding: isMobile ? '28px 20px' : '40px', width: '100%', maxWidth: '600px',
                 boxShadow: '0 12px 30px rgba(26, 77, 59, 0.05)', border: '1px solid rgba(0,0,0,0.05)'
             }}>
                 <div style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -170,7 +172,7 @@ const Screen3RetailIssue = () => {
                         {tradeType === 'DIRECT' ? (
                             <>
                                 <div style={{
-                                    width: '180px', height: '180px', margin: '0 auto 20px', background: '#FFF',
+                                    width: 'clamp(120px, 45vw, 180px)', height: 'clamp(120px, 45vw, 180px)', margin: '0 auto 20px', background: '#FFF',
                                     border: '1px solid #E2E8F0', borderRadius: '12px', padding: '10px',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center'
                                 }}>

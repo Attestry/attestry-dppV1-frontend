@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
 import { ShieldCheck } from '../components/Icons';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const ScreenABrandMint = () => {
     const navigate = useNavigate();
     const { currentUser, mint } = useDPPStore();
+    const isMobile = useIsMobile();
 
     const [model, setModel] = useState('New Model');
     const [sn, setSn] = useState('SN-' + Math.floor(Math.random() * 10000));
@@ -53,9 +55,9 @@ const ScreenABrandMint = () => {
     };
 
     return (
-        <div style={{ padding: '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+        <div style={{ padding: isMobile ? '20px 12px' : '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
             <div style={{
-                background: '#FFFFFF', borderRadius: '24px', padding: '50px 40px', width: '100%', maxWidth: '600px',
+                background: '#FFFFFF', borderRadius: '24px', padding: isMobile ? '28px 20px' : '50px 40px', width: '100%', maxWidth: '600px',
                 boxShadow: '0 12px 30px rgba(0,0,0,0.03)', border: '1px solid rgba(0,0,0,0.04)',
                 animation: 'fadeInUp 0.4s ease-out'
             }}>
@@ -67,7 +69,7 @@ const ScreenABrandMint = () => {
                     </p>
                 </div>
 
-                <div style={{ background: '#FAFCFB', padding: '32px', borderRadius: '16px', border: '1px solid #E2E8F0', marginBottom: '30px' }}>
+                <div style={{ background: '#FAFCFB', padding: isMobile ? '20px' : '32px', borderRadius: '16px', border: '1px solid #E2E8F0', marginBottom: '30px' }}>
                     <div style={{ marginBottom: '24px' }}>
                         <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', color: '#4A5568', marginBottom: '10px' }}>
                             생산 모델명

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const Screen2Login = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const returnUrl = searchParams.get('return') || '/me/passports';
     const { currentUser, login } = useDPPStore();
+    const isMobile = useIsMobile();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -44,9 +46,11 @@ const Screen2Login = () => {
 
 
     return (
-        <div style={{ padding: '60px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
+        <div style={{ padding: isMobile ? '24px 12px' : '60px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
             <div style={{
-                background: '#FFFFFF', borderRadius: '32px', padding: '50px 40px', width: '100%', maxWidth: '460px',
+                background: '#FFFFFF', borderRadius: '32px',
+                padding: isMobile ? '30px 20px' : '50px 40px',
+                width: '100%', maxWidth: '460px',
                 boxShadow: '0 20px 50px rgba(0,0,0,0.06)', border: '1px solid rgba(0,0,0,0.04)',
                 animation: 'fadeInUp 0.5s ease-out'
             }}>

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
 import { FolderOpen, Lock } from '../components/Icons';
 import { QRCodeSVG } from 'qrcode.react';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const EventItem = ({ ev, idx, isLast, translateAction }) => {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -105,6 +106,7 @@ const Screen1PublicPassport = () => {
     const { qrPublicCode } = useParams();
     const navigate = useNavigate();
     const { getPublicPassport, currentUser } = useDPPStore();
+    const isMobile = useIsMobile();
 
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -202,16 +204,17 @@ const Screen1PublicPassport = () => {
             <div style={{
                 position: 'relative',
                 width: '100%',
-                minHeight: '55vh',
+                minHeight: isMobile ? 'clamp(280px, 50vh, 400px)' : '55vh',
                 background: 'linear-gradient(135deg, #102A20 0%, #1A4D3B 50%, #2A7258 100%)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '40px 20px 60px',
+                padding: isMobile ? '30px 16px 50px' : '40px 20px 60px',
                 overflow: 'visible'
             }}>
-                {/* Decorative floating orbs */}
+                {/* Decorative floating orbs — hidden on mobile for performance */}
+                {!isMobile && <>
                 <div style={{
                     position: 'absolute', top: '-20%', right: '-10%', width: '300px', height: '300px',
                     background: 'radial-gradient(circle, rgba(162, 133, 222, 0.4) 0%, transparent 70%)',
@@ -222,6 +225,7 @@ const Screen1PublicPassport = () => {
                     background: 'radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%)',
                     filter: 'blur(30px)'
                 }}></div>
+                </>}
 
                 <div style={{
                     color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', letterSpacing: '0.2em', fontWeight: '600', marginBottom: '16px',
@@ -248,7 +252,8 @@ const Screen1PublicPassport = () => {
                 }}>
                     {/* Product Image or Public QR Code Container */}
                     <div style={{
-                        width: '240px', height: '240px', borderRadius: '24px', background: '#FFFFFF',
+                        width: 'clamp(140px, 55vw, 240px)', height: 'clamp(140px, 55vw, 240px)',
+                        borderRadius: '24px', background: '#FFFFFF',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         boxShadow: '0 10px 30px rgba(0,0,0,0.15)', marginBottom: '24px', overflow: 'hidden',
                         padding: data.imageUrl ? '0' : '12px',
@@ -271,7 +276,7 @@ const Screen1PublicPassport = () => {
                         }}>
                             <QRCodeSVG
                                 value={publicUrl}
-                                size={180}
+                                size={isMobile ? Math.min(window.innerWidth * 0.45, 160) : 180}
                                 bgColor={"#ffffff"}
                                 fgColor={"#102A20"}
                                 level={"H"}
@@ -371,7 +376,7 @@ const Screen1PublicPassport = () => {
                 background: 'rgba(255, 255, 255, 0.9)',
                 backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
                 borderTop: '1px solid rgba(0,0,0,0.05)',
-                padding: '20px 24px',
+                padding: `20px 24px max(20px, env(safe-area-inset-bottom, 20px)) 24px`,
                 display: 'flex', justifyContent: 'center',
                 boxShadow: '0 -10px 30px rgba(0,0,0,0.03)',
                 zIndex: 10
