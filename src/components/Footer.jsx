@@ -114,9 +114,9 @@ const Footer = () => {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', color: '#A0AEC0' }}>
                         <span>Developed by</span>
-                        <span style={{ fontWeight: '700', color: '#718096' }}>김선욱</span>
-                        <span>·</span>
                         <span style={{ fontWeight: '700', color: '#718096' }}>김민영</span>
+                        <span>&amp;</span>
+                        <span style={{ fontWeight: '700', color: '#718096' }}>김선욱</span>
                     </div>
                 </div>
             </div>
