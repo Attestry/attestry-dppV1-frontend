@@ -34,12 +34,16 @@ const Footer = () => {
                         <div style={{
                             display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px'
                         }}>
-                            <div style={{
-                                width: '32px', height: '32px', borderRadius: '10px',
-                                background: 'linear-gradient(135deg, #1A4D3B 0%, #2A7258 100%)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: '0.9rem', color: 'white', fontWeight: '900'
-                            }}>A</div>
+                            <svg width="32" height="32" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 3L31 8.5V18C31 25.5 25 31.5 18 34C11 31.5 5 25.5 5 18V8.5Z" fill="url(#shieldGradFooter)"/>
+                                <path d="M12.5 18.5L16.5 22.5L24 14" stroke="#FFFFFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                <defs>
+                                    <linearGradient id="shieldGradFooter" x1="0" y1="0" x2="1" y2="1">
+                                        <stop offset="0%" stopColor="#1A4D3B"/>
+                                        <stop offset="100%" stopColor="#6B4C9A"/>
+                                    </linearGradient>
+                                </defs>
+                            </svg>
                             <span style={{ fontSize: '1.1rem', fontWeight: '800', color: '#102A20', letterSpacing: '-0.02em' }}>
                                 ATTESTRY DPP
                             </span>

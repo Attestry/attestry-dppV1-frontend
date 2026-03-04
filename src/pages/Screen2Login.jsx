@@ -114,7 +114,7 @@ const Screen2Login = () => {
                         onMouseOver={e => e.currentTarget.style.background = '#F7FAFC'}
                         onMouseOut={e => e.currentTarget.style.background = '#FFFFFF'}
                     >
-                        새로운 파트너 등록 (가입)
+                        새로운 계정 생성
                     </button>
                 </div>
             </div>

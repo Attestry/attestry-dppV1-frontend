@@ -1,15 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
 import { ShieldCheck, ScanLine, ArrowsExchange, TrendingUp } from '../components/Icons';
 import axios from 'axios';
 import { useIsMobile } from '../hooks/useIsMobile';
 
+const useCountUp = (target, duration = 1200) => {
+    const [value, setValue] = useState(0);
+    const rafRef = useRef(null);
+    useEffect(() => {
+        if (target === 0) { setValue(0); return; }
+        const start = performance.now();
+        const animate = (now) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setValue(Math.round(eased * target));
+            if (progress < 1) rafRef.current = requestAnimationFrame(animate);
+        };
+        rafRef.current = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(rafRef.current);
+    }, [target, duration]);
+    return value;
+};
+
 const HomePage = () => {
     const navigate = useNavigate();
     const { currentUser } = useDPPStore();
     const isMobile = useIsMobile();
     const [stats, setStats] = useState({ assets: 0, transfers: 0, ledger: 0 });
+
+    const countAssets = useCountUp(stats.assets);
+    const countTransfers = useCountUp(stats.transfers);
+    const countLedger = useCountUp(stats.ledger);
 
     useEffect(() => {
         axios.get('/api/stats/today').then(res => {
@@ -229,9 +252,9 @@ const HomePage = () => {
                     padding: '36px 0', borderTop: '1px solid rgba(0,0,0,0.05)', borderBottom: '1px solid rgba(0,0,0,0.05)'
                 }}>
                     {[
-                        { num: stats.assets.toLocaleString(), label: '등록된 자산', color: '#1A4D3B' },
-                        { num: stats.transfers.toLocaleString(), label: '양도 완료', color: '#6B4C9A' },
-                        { num: stats.ledger.toLocaleString(), label: '원장 기록', color: '#1A4D3B' }
+                        { num: countAssets.toLocaleString(), label: '등록된 자산', color: '#1A4D3B' },
+                        { num: countTransfers.toLocaleString(), label: '양도 완료', color: '#6B4C9A' },
+                        { num: countLedger.toLocaleString(), label: '원장 기록', color: '#1A4D3B' }
                     ].map((s, i) => (
                         <div key={i} style={{ textAlign: 'center' }}>
                             <div style={{
