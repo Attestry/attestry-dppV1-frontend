@@ -48,7 +48,8 @@ const Screen6TransferStart = () => {
                 const [y, M, d, h, m, s] = transferInfo.expiresAt;
                 expiryTime = Date.UTC(y, M - 1, d, h || 0, m || 0, s || 0);
             } else {
-                expiryTime = new Date(transferInfo.expiresAt).getTime();
+                const utcStr = transferInfo.expiresAt.includes('Z') ? transferInfo.expiresAt : transferInfo.expiresAt + 'Z';
+                expiryTime = new Date(utcStr).getTime();
             }
 
             const now = Date.now();
