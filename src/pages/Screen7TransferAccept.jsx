@@ -164,6 +164,7 @@ const Screen7TransferAccept = () => {
     };
 
     return (
+        <>
         <div id="mobile-qr-temp-transfer" style={{ display: 'none' }} />
         <div style={{ padding: isMobile ? '20px 12px' : '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
             <div style={{
@@ -302,6 +303,7 @@ const Screen7TransferAccept = () => {
                 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
             `}</style>
         </div>
+        </>
     );
 };
 
