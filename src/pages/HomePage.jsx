@@ -37,7 +37,7 @@ const HomePage = () => {
     useEffect(() => {
         getTodayStatsApi()
             .then(res => {
-                const data = res.data;
+                const data = res.data?.data ?? res.data;
                 if (data && typeof data.assets === 'number') {
                     setStats(data);
                 }
