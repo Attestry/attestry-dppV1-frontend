@@ -18,6 +18,8 @@ const Screen6TransferStart = () => {
     const [authError, setAuthError] = useState(null);
     const [timeLeft, setTimeLeft] = useState(0);
     const [transferCompleted, setTransferCompleted] = useState(false);
+    const [showCancelPopup, setShowCancelPopup] = useState(false);
+    const [cancelSuccess, setCancelSuccess] = useState(false);
 
     // Fetch active transfer on mount
     useEffect(() => {
@@ -140,8 +142,6 @@ const Screen6TransferStart = () => {
         );
     }
 
-    const [showCancelPopup, setShowCancelPopup] = useState(false);
-
     const handleMethodSelect = async (selectedMethod) => {
         try {
             setLoading(true);
@@ -170,8 +170,6 @@ const Screen6TransferStart = () => {
             setLoading(false);
         }
     };
-
-    const [cancelSuccess, setCancelSuccess] = useState(false);
 
     const transferAcceptUrl = transferInfo
         ? buildTransferAcceptUrl(window.location.origin, transferInfo.transferToken, transferInfo.code)
