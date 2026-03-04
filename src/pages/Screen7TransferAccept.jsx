@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import { extractTransferCredential } from '../utils/qrPayload';
 import { useIsMobile } from '../hooks/useIsMobile';
 
@@ -70,47 +70,29 @@ const Screen7TransferAccept = () => {
     }, [searchParams, currentUser]);
 
     useEffect(() => {
-        const isCameraSupported = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
-        if (!isCameraSupported) {
-            setCameraBlocked(true);
-            return;
-        }
-
-        if (!scanMode || loading || searchParams.get('payload') || searchParams.get('c')) {
-            return;
-        }
+        if (!scanMode || loading || searchParams.get('payload') || searchParams.get('c')) return;
 
         let isMounted = true;
 
-        const startScanner = () => {
+        const startScanner = async () => {
             if (!isMounted || scannerRef.current || !document.getElementById('qr-reader')) return;
-
             try {
-                const scanner = new Html5QrcodeScanner(
-                    'qr-reader',
-                    {
-                        fps: 12,
-                        qrbox: { width: 280, height: 280 },
-                        rememberLastUsedCamera: true,
-                        supportedScanTypes: [0]
-                    },
-                    false
-                );
-
-                scannerRef.current = scanner;
-
-                scanner.render(
+                const html5QrCode = new Html5Qrcode('qr-reader');
+                scannerRef.current = html5QrCode;
+                await html5QrCode.start(
+                    { facingMode: 'environment' },
+                    { fps: 12, qrbox: { width: 250, height: 250 } },
                     (decodedText) => {
                         if (scannerRef.current) {
-                            scannerRef.current.clear().catch(() => { });
+                            scannerRef.current.stop().catch(() => {});
                             scannerRef.current = null;
                         }
                         handleAcceptDirectly(decodedText);
                     },
-                    () => { }
+                    () => {}
                 );
             } catch (err) {
-                console.error('Scanner setup failed:', err);
+                if (isMounted) setCameraBlocked(true);
             }
         };
 
@@ -120,7 +102,7 @@ const Screen7TransferAccept = () => {
             isMounted = false;
             clearTimeout(timerId);
             if (scannerRef.current) {
-                scannerRef.current.clear().catch(() => { });
+                scannerRef.current.stop().catch(() => {});
                 scannerRef.current = null;
             }
         };

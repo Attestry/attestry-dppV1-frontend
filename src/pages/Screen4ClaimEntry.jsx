@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
 import { Lock, Key, Camera } from '../components/Icons';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import { extractTransferCredential } from '../utils/qrPayload';
 
 const Screen4ClaimEntry = () => {
@@ -77,46 +77,28 @@ const Screen4ClaimEntry = () => {
     };
 
     useEffect(() => {
-        const isCameraSupported = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
-        if (!isCameraSupported) {
-            setCameraBlocked(true);
-            return;
-        }
-
-        if (!scannerActive || tradeType !== 'DIRECT' || loading) {
-            return;
-        }
+        if (!scannerActive || tradeType !== 'DIRECT' || loading) return;
 
         let isMounted = true;
-        const startScanner = () => {
-            if (!isMounted || scannerRef.current || !document.getElementById('qr-reader-claim')) return;
+        let html5QrCode = null;
 
+        const startScanner = async () => {
+            if (!isMounted || !document.getElementById('qr-reader-claim')) return;
             try {
-                const scanner = new Html5QrcodeScanner(
-                    "qr-reader-claim",
-                    {
-                        fps: 10,
-                        qrbox: { width: 250, height: 250 },
-                        rememberLastUsedCamera: true,
-                        supportedScanTypes: [0]
-                    },
-                    false
-                );
-
-                scannerRef.current = scanner;
-
-                scanner.render(
+                html5QrCode = new Html5Qrcode('qr-reader-claim');
+                scannerRef.current = html5QrCode;
+                await html5QrCode.start(
+                    { facingMode: 'environment' },
+                    { fps: 10, qrbox: { width: 250, height: 250 } },
                     (decodedText) => {
-                        if (scannerRef.current) {
-                            scannerRef.current.clear().catch(e => console.error(e));
-                            scannerRef.current = null;
-                        }
+                        html5QrCode.stop().catch(() => {});
+                        scannerRef.current = null;
                         processScannedToken(decodedText);
                     },
-                    (error) => { }
+                    () => {}
                 );
             } catch (err) {
-                console.error("Scanner setup failed:", err);
+                if (isMounted) setCameraBlocked(true);
             }
         };
 
@@ -126,7 +108,7 @@ const Screen4ClaimEntry = () => {
             isMounted = false;
             clearTimeout(timerId);
             if (scannerRef.current) {
-                scannerRef.current.clear().catch(e => console.error(e));
+                scannerRef.current.stop().catch(() => {});
                 scannerRef.current = null;
             }
         };
