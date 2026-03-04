@@ -2,9 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDPPStore } from '../store/useDPPStore';
 import { Lock, Key, Camera } from '../components/Icons';
-import { Html5QrcodeScanner, Html5Qrcode } from 'html5-qrcode';
+import { Html5QrcodeScanner } from 'html5-qrcode';
 import { extractTransferCredential } from '../utils/qrPayload';
-import { useIsMobile } from '../hooks/useIsMobile';
 
 const Screen4ClaimEntry = () => {
     const [tradeType, setTradeType] = useState('DIRECT'); // DIRECT or ONLINE
@@ -14,7 +13,6 @@ const Screen4ClaimEntry = () => {
     const [successMsg, setSuccessMsg] = useState('');
     const scannerRef = useRef(null);
     const [cameraBlocked, setCameraBlocked] = useState(false);
-    const isMobile = useIsMobile();
 
     const navigate = useNavigate();
     const { currentUser, acceptTransfer, getTransferDetails } = useDPPStore();
@@ -78,28 +76,6 @@ const Screen4ClaimEntry = () => {
         }
     };
 
-    // Mobile: handle image file from native camera
-    const handleMobileFileChange = async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        if (!currentUser) {
-            alert("보안을 위해 먼저 내 패스포트 라운지에 입장(로그인)해야 합니다.");
-            navigate('/login?return=/claim-entry');
-            return;
-        }
-        setLoading(true);
-        const tempDivId = 'mobile-qr-temp-claim';
-        try {
-            const html5QrCode = new Html5Qrcode(tempDivId);
-            const result = await html5QrCode.scanFile(file, true);
-            await processScannedToken(result);
-        } catch (err) {
-            alert("QR 인식 실패: 더 선명한 사진을 찍거나 QR 코드 전체가 보이도록 찍어주세요.");
-            setLoading(false);
-        }
-    };
-
-    // Desktop: Html5QrcodeScanner
     useEffect(() => {
         const isCameraSupported = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
         if (!isCameraSupported) {
@@ -107,7 +83,7 @@ const Screen4ClaimEntry = () => {
             return;
         }
 
-        if (isMobile || !scannerActive || tradeType !== 'DIRECT' || loading) {
+        if (!scannerActive || tradeType !== 'DIRECT' || loading) {
             return;
         }
 
@@ -154,7 +130,7 @@ const Screen4ClaimEntry = () => {
                 scannerRef.current = null;
             }
         };
-    }, [scannerActive, tradeType, loading, isMobile]);
+    }, [scannerActive, tradeType, loading]);
 
     // Success Screen
     if (successMsg) {
@@ -191,8 +167,6 @@ const Screen4ClaimEntry = () => {
 
     return (
         <div style={{ padding: '40px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-            {/* Hidden temp div for mobile QR scanning */}
-            <div id="mobile-qr-temp-claim" style={{ display: 'none' }} />
 
             <div style={{
                 background: '#FFFFFF', borderRadius: '24px', padding: '40px', width: '100%', maxWidth: '600px',
@@ -242,36 +216,7 @@ const Screen4ClaimEntry = () => {
                                 직원이 제시한 QR 코드를 카메라로 스캔해주세요.
                             </p>
 
-                            {isMobile ? (
-                                /* Mobile: native camera via file input */
-                                <div>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        capture="environment"
-                                        style={{ display: 'none' }}
-                                        id="mobile-camera-claim"
-                                        onChange={handleMobileFileChange}
-                                    />
-                                    <label
-                                        htmlFor="mobile-camera-claim"
-                                        style={{
-                                            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                                            gap: '12px', padding: '32px 20px',
-                                            background: '#FFFFFF', border: '2px dashed #1A4D3B',
-                                            borderRadius: '16px', cursor: 'pointer', transition: 'all 0.2s'
-                                        }}
-                                    >
-                                        <Camera width={40} height={40} stroke="#1A4D3B" />
-                                        <span style={{ color: '#1A4D3B', fontWeight: '700', fontSize: '1.05rem' }}>
-                                            {loading ? 'QR 인식 중...' : '📷 카메라로 QR 스캔하기'}
-                                        </span>
-                                        <span style={{ color: '#A0AEC0', fontSize: '0.85rem' }}>
-                                            탭하여 카메라 열기
-                                        </span>
-                                    </label>
-                                </div>
-                            ) : scannerActive ? (
+                            {scannerActive ? (
                                 cameraBlocked ? (
                                     <div style={{ textAlign: 'center', color: '#E53E3E', fontSize: '0.9rem', lineHeight: '1.5', background: '#FFF5F5', padding: '20px', borderRadius: '16px', border: '1px solid #E53E3E' }}>
                                         ⚠️ <b>카메라 권한 차단됨</b><br /><br />
