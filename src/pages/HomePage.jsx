@@ -10,7 +10,10 @@ const HomePage = () => {
     const [stats, setStats] = useState({ assets: 0, transfers: 0, ledger: 0 });
 
     useEffect(() => {
-        axios.get('/api/stats/today').then(res => setStats(res.data?.data ?? res.data ?? { assets: 0, transfers: 0, ledger: 0 })).catch(() => { });
+        axios.get('/api/stats/today').then(res => {
+            const data = res.data?.data ?? res.data;
+            if (data && typeof data.assets === 'number') setStats(data);
+        }).catch(() => { });
     }, []);
 
     return (
